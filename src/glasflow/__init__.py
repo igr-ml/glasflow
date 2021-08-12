@@ -9,6 +9,8 @@ Code is hosted at: https://github.com/igr-ml/glasflow
 
 nflows: https://github.com/bayesiains/nflows
 """
+from . import _wrappers  # Import wrappers to make sure patches are applied.
+
 from .flows import (
     CouplingNSF,
     RealNVP,
