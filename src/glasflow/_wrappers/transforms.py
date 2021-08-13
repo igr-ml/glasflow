@@ -2,7 +2,7 @@
 """
 Wrappers for `nflows.transforms`
 """
-import nflows
+import nflows.transforms
 import torch
 import wrapt
 
