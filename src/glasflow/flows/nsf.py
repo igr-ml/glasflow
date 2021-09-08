@@ -7,6 +7,7 @@ See: https://arxiv.org/abs/1906.04032
 from nflows.transforms.coupling import (
     PiecewiseRationalQuadraticCouplingTransform,
 )
+import torch
 from .coupling import CouplingFlow
 
 
@@ -15,6 +16,9 @@ class CouplingNSF(CouplingFlow):
 
     See :obj:`glasflow.flow.coupling.CouplingFlow` for the complete list of
     parameters and methods.
+
+    Supports use of a uniform distribution for the latent space. This
+    automatically disables the tails and sets the bounds to [0, 1).
 
     Parameters
     ----------
@@ -33,14 +37,34 @@ class CouplingNSF(CouplingFlow):
     """
 
     def __init__(
-        self, *args, num_bins=4, tail_type="linear", tail_bound=5.0, **kwargs
+        self,
+        *args,
+        num_bins=4,
+        tail_type="linear",
+        tail_bound=5.0,
+        **kwargs,
     ):
         transform_class = PiecewiseRationalQuadraticCouplingTransform
+
+        distribution = kwargs.pop("distribution", None)
+
+        if distribution == "uniform":
+            from ..distributions import MultidimensionalUniform
+
+            n_inputs = args[0]
+            tail_bound = 1.0
+            tail_type = None
+            distribution = MultidimensionalUniform(
+                low=torch.Tensor(n_inputs * [0.0]),
+                high=torch.Tensor(n_inputs * [1.0]),
+            )
+
         super().__init__(
             transform_class,
             *args,
             num_bins=num_bins,
             tails=tail_type,
             tail_bound=tail_bound,
+            distribution=distribution,
             **kwargs,
         )
