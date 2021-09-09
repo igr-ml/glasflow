@@ -44,7 +44,7 @@ class MultidimensionalUniform(Distribution):
     def _log_prob(self, inputs, context):
         if context is not None:
             raise NotImplementedError(
-                "Context is not supported by BoxUniform!"
+                "Context is not supported by MultidimensionalUniform!"
             )
         lb = self.low.le(inputs).type_as(self.low).prod(-1)
         ub = self.high.gt(inputs).type_as(self.low).prod(-1)
@@ -53,7 +53,7 @@ class MultidimensionalUniform(Distribution):
     def _sample(self, num_samples, context):
         if context is not None:
             raise NotImplementedError(
-                "Context is not supported by BoxUniform!"
+                "Context is not supported by MultidimensionalUniform!"
             )
         low_expanded = self.low.expand(num_samples, *self._shape)
         high_expanded = self.high.expand(num_samples, *self._shape)
