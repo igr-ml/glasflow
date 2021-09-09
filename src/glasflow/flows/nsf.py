@@ -22,8 +22,10 @@ class CouplingNSF(CouplingFlow):
 
     Parameters
     ----------
-    args :
-        Positional arguments passed to the parent class.
+    n_inputs : int
+        Number of inputs
+    n_transforms : int
+        Number of transforms
     num_bins : int
         Number of bins for the spline in each dimension.
     tail_type : {None, 'linear'}
@@ -38,7 +40,8 @@ class CouplingNSF(CouplingFlow):
 
     def __init__(
         self,
-        *args,
+        n_inputs,
+        n_transforms,
         num_bins=4,
         tail_type="linear",
         tail_bound=5.0,
@@ -51,17 +54,18 @@ class CouplingNSF(CouplingFlow):
         if distribution == "uniform":
             from ..distributions import MultidimensionalUniform
 
-            n_inputs = args[0]
             tail_bound = 1.0
             tail_type = None
             distribution = MultidimensionalUniform(
                 low=torch.Tensor(n_inputs * [0.0]),
                 high=torch.Tensor(n_inputs * [1.0]),
             )
+            kwargs["batch_norm_between_transforms"] = False
 
         super().__init__(
             transform_class,
-            *args,
+            n_inputs,
+            n_transforms,
             num_bins=num_bins,
             tails=tail_type,
             tail_bound=tail_bound,
